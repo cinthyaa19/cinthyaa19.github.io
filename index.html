@@ -376,16 +376,31 @@
         animation-delay: -4s;
       }
 
-      @keyframes float {
-        0%,
-        100% {
-          transform: translateY(0px) rotate(0deg);
-          border-radius: 50%;
-        }
-        50% {
-          transform: translateY(-10px) rotate(180deg);
-          border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;
-        }
+      /* CSS untuk cursor input */
+      @keyframes blink-cursor {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0; }
+      }
+
+      .cursor-indicator {
+        display: inline-block;
+        width: 2px;
+        height: 1.8em;
+        background-color: #2196f3;
+        margin-left: 2px;
+        vertical-align: middle;
+        animation: blink-cursor 1s infinite;
+        opacity: 0;
+      }
+
+      .cursor-active .cursor-indicator {
+        opacity: 1;
+      }
+
+      /* Tambahkan relative positioning ke number-display */
+      .number-display {
+        position: relative;
+        /* existing styles... */
       }
 
       /* Modifikasi untuk layout landscape */
@@ -531,8 +546,8 @@
               onclick="focusInput()"
             >
               <span class="placeholder-text" id="displayText"
-                >Ketik atau pilih angka</span
-              >
+                >Ketik atau pilih angka</span>
+              <span class="cursor-indicator" id="cursor"></span>
             </div>
             <input
               type="text"
@@ -728,15 +743,15 @@
       document
         .getElementById("numberInput")
         .addEventListener("focus", function () {
-          document.getElementById("numberDisplay").style.borderColor =
-            "#2196f3";
+          document.getElementById("numberDisplay").style.borderColor = "#2196f3";
+          document.getElementById("numberDisplay").classList.add("cursor-active");
         });
 
       document
         .getElementById("numberInput")
         .addEventListener("blur", function () {
-          document.getElementById("numberDisplay").style.borderColor =
-            "#bbdefb";
+          document.getElementById("numberDisplay").style.borderColor = "#bbdefb";
+          document.getElementById("numberDisplay").classList.remove("cursor-active");
         });
     </script>
   </body>

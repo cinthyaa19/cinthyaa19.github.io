@@ -1,0 +1,743 @@
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <title>Number Stack</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Poppins", "Arial", sans-serif;
+        background: linear-gradient(
+          45deg,
+          #e3f2fd 0%,
+          #bbdefb 50%,
+          #90caf9 100%
+        );
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+        position: relative;
+      }
+
+      body::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: radial-gradient(
+            circle at 25% 25%,
+            rgba(33, 150, 243, 0.1) 0%,
+            transparent 40%
+          ),
+          radial-gradient(
+            circle at 75% 75%,
+            rgba(100, 181, 246, 0.1) 0%,
+            transparent 40%
+          );
+        pointer-events: none;
+      }
+
+      .main-container {
+        max-width: 480px;
+        width: 100%;
+        position: relative;
+      }
+
+      .card {
+        background: white;
+        border-radius: 32px;
+        box-shadow: 0 20px 60px rgba(33, 150, 243, 0.12),
+          0 8px 32px rgba(100, 181, 246, 0.08);
+        padding: 0;
+        overflow: hidden;
+        position: relative;
+      }
+
+      .card::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 6px;
+        background: linear-gradient(90deg, #2196f3, #64b5f6, #42a5f5);
+      }
+
+      .header-section {
+        text-align: center;
+        padding: 48px 40px 32px 40px;
+        background: linear-gradient(
+          135deg,
+          rgba(33, 150, 243, 0.05),
+          rgba(100, 181, 246, 0.05)
+        );
+      }
+
+      .main-title {
+        font-size: 2rem;
+        font-weight: 700;
+        background: linear-gradient(135deg, #2196f3, #64b5f6);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        margin-bottom: 8px;
+        letter-spacing: -0.5px;
+      }
+
+      .subtitle {
+        color: #42a5f5;
+        font-size: 0.95rem;
+        font-weight: 400;
+        opacity: 0.8;
+      }
+
+      .content-section {
+        padding: 32px 40px 48px 40px;
+      }
+
+      .input-field {
+        position: relative;
+        margin-bottom: 32px;
+      }
+
+      .input-label {
+        display: block;
+        font-size: 0.9rem;
+        font-weight: 600;
+        color: #42a5f5;
+        margin-bottom: 12px;
+        text-transform: uppercase;
+        letter-spacing: 0.8px;
+      }
+
+      .number-display {
+        width: 100%;
+        height: 80px;
+        border: 3px solid #bbdefb;
+        border-radius: 20px;
+        background: linear-gradient(135deg, #e3f2fd, #bbdefb);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2.5rem;
+        font-weight: 300;
+        color: #2196f3;
+        cursor: text;
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .number-display:hover {
+        border-color: #2196f3;
+        transform: translateY(-2px);
+        box-shadow: 0 8px 24px rgba(33, 150, 243, 0.2);
+      }
+
+      .number-display::before {
+        content: "";
+        position: absolute;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: linear-gradient(
+          45deg,
+          transparent,
+          rgba(33, 150, 243, 0.1),
+          transparent
+        );
+        transform: rotate(-45deg);
+        transition: all 0.6s ease;
+        opacity: 0;
+      }
+
+      .number-display:hover::before {
+        opacity: 1;
+        transform: rotate(-45deg) translateX(100%);
+      }
+
+      .hidden-input {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        opacity: 0;
+        font-size: 2.5rem;
+        text-align: center;
+        border: none;
+        outline: none;
+        background: transparent;
+        color: transparent;
+        cursor: text;
+      }
+
+      .placeholder-text {
+        color: rgba(33, 150, 243, 0.4);
+        font-size: 1.2rem;
+      }
+
+      .number-grid {
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        gap: 12px;
+        margin-bottom: 32px;
+      }
+
+      .number-btn {
+        aspect-ratio: 1;
+        border: 2px solid #bbdefb;
+        background: white;
+        border-radius: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: #2196f3;
+        cursor: pointer;
+        transition: all 0.2s ease;
+      }
+
+      .number-btn:hover {
+        background: #2196f3;
+        color: white;
+        border-color: #2196f3;
+        transform: scale(1.05);
+      }
+
+      .action-section {
+        display: flex;
+        gap: 16px;
+        margin-bottom: 32px;
+      }
+
+      .btn {
+        flex: 1;
+        padding: 16px 24px;
+        border: none;
+        border-radius: 16px;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .btn-primary {
+        background: linear-gradient(135deg, #2196f3, #64b5f6);
+        color: white;
+        box-shadow: 0 4px 16px rgba(33, 150, 243, 0.3);
+      }
+
+      .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 24px rgba(33, 150, 243, 0.4);
+      }
+
+      .btn-secondary {
+        background: white;
+        color: #42a5f5;
+        border: 2px solid #bbdefb;
+      }
+
+      .btn-secondary:hover {
+        background: #e3f2fd;
+        border-color: #2196f3;
+      }
+
+      .output-container {
+        background: linear-gradient(135deg, #e3f2fd, #bbdefb);
+        border: 2px solid #bbdefb;
+        border-radius: 20px;
+        padding: 24px;
+        min-height: 200px;
+        position: relative;
+      }
+
+      .output-label {
+        font-size: 0.9rem;
+        font-weight: 600;
+        color: #42a5f5;
+        margin-bottom: 16px;
+        text-transform: uppercase;
+        letter-spacing: 0.8px;
+        text-align: center;
+      }
+
+      .output-display {
+        font-family: "JetBrains Mono", "Courier New", monospace;
+        font-size: 1rem;
+        line-height: 1.8;
+        color: #1976d2;
+        white-space: pre-line;
+        text-align: left;
+        background: white;
+        padding: 20px;
+        border-radius: 12px;
+        min-height: 120px;
+        box-shadow: inset 0 2px 8px rgba(33, 150, 243, 0.1);
+      }
+
+      .empty-state {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 120px;
+        color: rgba(33, 150, 243, 0.4);
+      }
+
+      .empty-icon {
+        width: 40px;
+        height: 40px;
+        margin-bottom: 12px;
+        opacity: 0.6;
+      }
+
+      .notification {
+        position: fixed;
+        bottom: 32px;
+        left: 50%;
+        transform: translateX(-50%) translateY(100px);
+        background: white;
+        color: #1976d2;
+        padding: 16px 24px;
+        border-radius: 50px;
+        box-shadow: 0 8px 32px rgba(33, 150, 243, 0.2);
+        border: 2px solid #bbdefb;
+        font-weight: 600;
+        font-size: 0.9rem;
+        transition: transform 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        z-index: 1000;
+      }
+
+      .notification.show {
+        transform: translateX(-50%) translateY(0);
+      }
+
+      .notification.success {
+        background: linear-gradient(135deg, #2196f3, #64b5f6);
+        color: white;
+        border-color: #2196f3;
+      }
+
+      .notification.error {
+        background: #f3f8ff;
+        color: #1976d2;
+        border-color: #bbdefb;
+      }
+
+      .decorative-elements {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+        overflow: hidden;
+      }
+
+      .floating-circle {
+        position: absolute;
+        border-radius: 50%;
+        background: linear-gradient(
+          135deg,
+          rgba(33, 150, 243, 0.1),
+          rgba(100, 181, 246, 0.1)
+        );
+        animation: float 8s ease-in-out infinite;
+      }
+
+      .circle-1 {
+        width: 120px;
+        height: 120px;
+        top: -60px;
+        right: -60px;
+        animation-delay: 0s;
+      }
+
+      .circle-2 {
+        width: 80px;
+        height: 80px;
+        bottom: -40px;
+        left: -40px;
+        animation-delay: -4s;
+      }
+
+      @keyframes float {
+        0%,
+        100% {
+          transform: translateY(0px) rotate(0deg);
+          border-radius: 50%;
+        }
+        50% {
+          transform: translateY(-10px) rotate(180deg);
+          border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;
+        }
+      }
+
+      /* Modifikasi untuk layout landscape */
+      @media (min-width: 768px) and (orientation: landscape) {
+        .main-container {
+          max-width: 700px; /* Lebih lebar, tapi tidak terlalu lebar */
+        }
+
+        .card {
+          padding-bottom: 20px; /* Sedikit ruang di bagian bawah */
+        }
+
+        .header-section {
+          padding: 24px 40px 20px 40px; /* Header lebih compact */
+        }
+
+        .content-section {
+          padding: 20px 40px 24px 40px;
+        }
+
+        .input-field {
+          margin-bottom: 20px; /* Lebih dekat dengan grid */
+        }
+
+        .number-display {
+          height: 60px; /* Lebih kecil */
+          font-size: 2rem;
+        }
+
+        /* Grid angka yang lebih lebar, tidak terlalu tinggi */
+        .number-grid {
+          grid-template-columns: repeat(10, 1fr); /* 10 kolom lebih efisien untuk landscape */
+          gap: 10px;
+          margin-bottom: 20px;
+        }
+        
+        /* Tombol dengan jarak yang optimized */
+        .number-btn {
+          aspect-ratio: 1.5; /* Lebih lebar dari tinggi */
+        }
+        
+        /* Action buttons dan output container lebih compact */
+        .action-section {
+          margin-bottom: 20px;
+        }
+        
+        .output-container {
+          min-height: 160px; /* Lebih pendek */
+        }
+        
+        .output-display {
+          min-height: 100px;
+        }
+        
+        /* Override untuk landscape mobile */
+        @media (max-height: 500px) {
+          .header-section {
+            padding: 16px 30px 12px 30px;
+          }
+          
+          .main-title {
+            font-size: 1.6rem;
+            margin-bottom: 4px;
+          }
+          
+          .subtitle {
+            font-size: 0.85rem;
+          }
+          
+          .content-section {
+            padding: 12px 30px 16px 30px;
+          }
+          
+          .input-field {
+            margin-bottom: 12px;
+          }
+          
+          .number-display {
+            height: 50px;
+          }
+          
+          .number-grid {
+            margin-bottom: 12px;
+          }
+          
+          .action-section {
+            margin-bottom: 12px;
+          }
+        }
+      }
+
+      /* Styling khusus untuk mode landscape penuh - tetap vertikal */
+      @media (min-width: 1024px) and (orientation: landscape) {
+        .main-container {
+          max-width: 800px;
+        }
+
+        .header-section {
+          padding: 32px 40px 24px 40px;
+        }
+        
+        .content-section {
+          padding: 24px 40px 32px 40px;
+        }
+        
+        .number-display {
+          height: 70px;
+          font-size: 2.2rem;
+        }
+        
+        .output-container {
+          min-height: 180px;
+        }
+        
+        .output-display {
+          min-height: 120px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="main-container">
+      <div class="card">
+        <div class="decorative-elements">
+          <div class="floating-circle circle-1"></div>
+          <div class="floating-circle circle-2"></div>
+        </div>
+
+        <div class="header-section">
+          <h1 class="main-title">
+            <i class="fas fa-chart-bar" style="color: #2196f3; margin-right: 8px;"></i>
+            Number Stack
+          </h1>
+          <p class="subtitle">Buat pola angka yang menarik</p>
+        </div>
+
+        <div class="content-section">
+          <div class="input-field">
+            <label class="input-label">Angka Pilihan</label>
+            <div
+              class="number-display"
+              id="numberDisplay"
+              onclick="focusInput()"
+            >
+              <span class="placeholder-text" id="displayText"
+                >Ketik atau pilih angka</span
+              >
+            </div>
+            <input
+              type="text"
+              id="numberInput"
+              class="hidden-input"
+              placeholder="Masukkan angka..."
+            />
+          </div>
+
+          <div class="number-grid">
+            <div class="number-btn" onclick="selectNumber(1)">1</div>
+            <div class="number-btn" onclick="selectNumber(2)">2</div>
+            <div class="number-btn" onclick="selectNumber(3)">3</div>
+            <div class="number-btn" onclick="selectNumber(4)">4</div>
+            <div class="number-btn" onclick="selectNumber(5)">5</div>
+            <div class="number-btn" onclick="selectNumber(6)">6</div>
+            <div class="number-btn" onclick="selectNumber(7)">7</div>
+            <div class="number-btn" onclick="selectNumber(8)">8</div>
+            <div class="number-btn" onclick="selectNumber(9)">9</div>
+            <div
+              class="number-btn"
+              onclick="clearNumber()"
+              style="background: #f3f8ff; color: #1976d2"
+            >
+              ✕
+            </div>
+          </div>
+
+          <div class="action-section">
+            <button class="btn btn-primary" onclick="generatePattern()">
+              ✨ Buat Pola
+            </button>
+            <button class="btn btn-secondary" onclick="clearOutput()">
+              🔄 Reset
+            </button>
+          </div>
+
+          <div class="output-container">
+            <div class="output-label">Hasil Pola</div>
+            <div class="output-display" id="output">
+              <div class="empty-state">
+                <svg class="empty-icon" viewBox="0 0 24 24" fill="currentColor">
+                  <path
+                    d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"
+                  />
+                </svg>
+                <p>Pola akan muncul di sini</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      let selectedNumber = null;
+
+      function selectNumber(num) {
+        selectedNumber = num;
+        document.getElementById("numberInput").value = num;
+        updateDisplay(num);
+      }
+
+      function updateDisplay(value) {
+        const displayText = document.getElementById("displayText");
+        if (value && value.toString().trim() !== "") {
+          displayText.textContent = value;
+          displayText.style.color = "#2196f3";
+          displayText.classList.remove("placeholder-text");
+        } else {
+          displayText.textContent = "Ketik atau pilih angka";
+          displayText.style.color = "rgba(33, 150, 243, 0.4)";
+          displayText.classList.add("placeholder-text");
+        }
+      }
+
+      function clearNumber() {
+        selectedNumber = null;
+        document.getElementById("numberInput").value = "";
+        updateDisplay("");
+      }
+
+      function focusInput() {
+        document.getElementById("numberInput").focus();
+      }
+
+      function generatePattern() {
+        const input = document.getElementById("numberInput").value.trim();
+        const outputDiv = document.getElementById("output");
+
+        // Validasi input
+        if (!input) {
+          outputDiv.innerHTML = `
+              <div class="empty-state">
+                  <svg class="empty-icon" viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                  </svg>
+                  <p>Masukkan angka terlebih dahulu</p>
+              </div>
+          `;
+          showNotification("Masukkan angka dulu ya!", "error");
+          return;
+        }
+
+        // Cek apakah input adalah angka valid dan dalam rentang 1-9
+        const num = parseFloat(input);
+        if (isNaN(num) || !Number.isInteger(num) || num < 1 || num > 9) {
+          outputDiv.innerHTML = `
+              <div class="empty-state">
+                  <svg class="empty-icon" viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/>
+                  </svg>
+                  <p>Input tidak valid!</p>
+              </div>
+          `;
+          showNotification("Input tidak valid! Masukkan angka 1-9.", "error");
+          return;
+        }
+
+        const n = parseInt(num);
+        let result = `Input = ${n}\n\nOutput:\n`;
+
+        // Membuat pola sesuai aturan
+        for (let i = 1; i <= n; i++) {
+          let line = "";
+          for (let j = 1; j <= i; j++) {
+            line += i;
+            if (j < i) line += " ";
+          }
+          result += line + "\n";
+        }
+
+        outputDiv.textContent = result;
+        showNotification("Pola berhasil dibuat! 🎉", "success");
+      }
+
+      function clearOutput() {
+        const outputDiv = document.getElementById("output");
+
+        outputDiv.innerHTML = `
+                <div class="empty-state">
+                    <svg class="empty-icon" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                    </svg>
+                    <p>Pola akan muncul di sini</p>
+                </div>
+            `;
+        clearNumber();
+      }
+
+      function showNotification(text, type) {
+        const existingNotification = document.querySelector(".notification");
+        if (existingNotification) {
+          existingNotification.remove();
+        }
+
+        const notification = document.createElement("div");
+        notification.className = `notification ${type}`;
+        notification.textContent = text;
+
+        document.body.appendChild(notification);
+
+        setTimeout(() => notification.classList.add("show"), 100);
+
+        setTimeout(() => {
+          notification.classList.remove("show");
+          setTimeout(() => {
+            if (notification.parentNode) {
+              notification.remove();
+            }
+          }, 400);
+        }, 3000);
+      }
+
+      // Keyboard support dan real-time input handling
+      document
+        .getElementById("numberInput")
+        .addEventListener("input", function (e) {
+          const value = e.target.value;
+          selectedNumber = value;
+          updateDisplay(value);
+        });
+
+      document
+        .getElementById("numberInput")
+        .addEventListener("keypress", function (e) {
+          if (e.key === "Enter") {
+            generatePattern();
+          }
+        });
+
+      // Focus handling untuk input
+      document
+        .getElementById("numberInput")
+        .addEventListener("focus", function () {
+          document.getElementById("numberDisplay").style.borderColor =
+            "#2196f3";
+        });
+
+      document
+        .getElementById("numberInput")
+        .addEventListener("blur", function () {
+          document.getElementById("numberDisplay").style.borderColor =
+            "#bbdefb";
+        });
+    </script>
+  </body>
+</html>

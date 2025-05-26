@@ -121,6 +121,7 @@
         letter-spacing: 0.8px;
       }
 
+      /* Adjusted for button element */
       .number-display {
         width: 100%;
         height: 80px;
@@ -137,6 +138,12 @@
         transition: all 0.3s ease;
         position: relative;
         overflow: hidden;
+        /* Reset button styles */
+        appearance: none;
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        padding: 0;
+        text-align: center;
       }
 
       .number-display:hover {
@@ -196,6 +203,7 @@
         margin-bottom: 32px;
       }
 
+      /* Adjusted for button element */
       .number-btn {
         aspect-ratio: 1;
         border: 2px solid #bbdefb;
@@ -209,6 +217,9 @@
         color: #2196f3;
         cursor: pointer;
         transition: all 0.2s ease;
+        /* Added for proper button styling */
+        padding: 0;
+        font-family: inherit;
       }
 
       .number-btn:hover {
@@ -235,6 +246,7 @@
         transition: all 0.3s ease;
         position: relative;
         overflow: hidden;
+        font-family: inherit;
       }
 
       .btn-primary {
@@ -397,12 +409,6 @@
         opacity: 1;
       }
 
-      /* Tambahkan relative positioning ke number-display */
-      .number-display {
-        position: relative;
-        /* existing styles... */
-      }
-
       /* Modifikasi untuk layout landscape */
       @media (min-width: 768px) and (orientation: landscape) {
         .main-container {
@@ -519,6 +525,16 @@
           min-height: 120px;
         }
       }
+
+      /* Animasi floating untuk lingkaran dekoratif */
+      @keyframes float {
+        0%, 100% {
+          transform: translateY(0) rotate(0deg);
+        }
+        50% {
+          transform: translateY(-20px) rotate(10deg);
+        }
+      }
     </style>
   </head>
   <body>
@@ -539,8 +555,10 @@
 
         <div class="content-section">
           <div class="input-field">
-            <label class="input-label">Angka Pilihan</label>
-            <div
+            <label class="input-label" for="numberInput">Angka Pilihan</label>
+            <!-- Changed div to button for better accessibility -->
+            <button
+              type="button"
               class="number-display"
               id="numberDisplay"
               onclick="focusInput()"
@@ -548,7 +566,7 @@
               <span class="placeholder-text" id="displayText"
                 >Ketik atau pilih angka</span>
               <span class="cursor-indicator" id="cursor"></span>
-            </div>
+            </button>
             <input
               type="text"
               id="numberInput"
@@ -558,22 +576,24 @@
           </div>
 
           <div class="number-grid">
-            <div class="number-btn" onclick="selectNumber(1)">1</div>
-            <div class="number-btn" onclick="selectNumber(2)">2</div>
-            <div class="number-btn" onclick="selectNumber(3)">3</div>
-            <div class="number-btn" onclick="selectNumber(4)">4</div>
-            <div class="number-btn" onclick="selectNumber(5)">5</div>
-            <div class="number-btn" onclick="selectNumber(6)">6</div>
-            <div class="number-btn" onclick="selectNumber(7)">7</div>
-            <div class="number-btn" onclick="selectNumber(8)">8</div>
-            <div class="number-btn" onclick="selectNumber(9)">9</div>
-            <div
+            <!-- Changed divs to buttons for better accessibility -->
+            <button type="button" class="number-btn" onclick="selectNumber(1)">1</button>
+            <button type="button" class="number-btn" onclick="selectNumber(2)">2</button>
+            <button type="button" class="number-btn" onclick="selectNumber(3)">3</button>
+            <button type="button" class="number-btn" onclick="selectNumber(4)">4</button>
+            <button type="button" class="number-btn" onclick="selectNumber(5)">5</button>
+            <button type="button" class="number-btn" onclick="selectNumber(6)">6</button>
+            <button type="button" class="number-btn" onclick="selectNumber(7)">7</button>
+            <button type="button" class="number-btn" onclick="selectNumber(8)">8</button>
+            <button type="button" class="number-btn" onclick="selectNumber(9)">9</button>
+            <button
+              type="button"
               class="number-btn"
               onclick="clearNumber()"
               style="background: #f3f8ff; color: #1976d2"
             >
               ✕
-            </div>
+            </button>
           </div>
 
           <div class="action-section">
